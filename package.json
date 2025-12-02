@@ -1,0 +1,11 @@
+{
+  "name": "fc4-rest-niveis-maturidade-with-tdd",
+  "version": "1.0.0",
+  "description": "A simple Express.js application using TypeScript",
+  "main": "dist/app.js",
+  "scripts": {
+    "test": "npx jest"
+  },
+  "author": "Fernando Boueres",
+  "license": "ISC"
+}
