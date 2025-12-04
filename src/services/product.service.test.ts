@@ -100,4 +100,46 @@ describe("ProductService", () => {
     expect(savedProduct?.price).toBe(product.price);
     expect(savedProduct?.categories).toEqual(product.categories);
   });
+
+  it("should update a Product", async () => {
+    const category1 = await categoryService.createCategory(
+      "Minha Categoria",
+      "minha-categoria",
+    );
+    const category2 = await categoryService.createCategory(
+      "My Categoria",
+      "my-category",
+    );
+    const product = await productService.createProduct(
+      "Meu Produto",
+      "my-product-slug",
+      "Este é o Meu Produto.",
+      100,
+      [category1.id, category2.id],
+    );
+    const category3 = await categoryService.createCategory(
+      "Mine Category",
+      "mine-category",
+    );
+
+    const data = {
+      id: product.id,
+      name: "Novo Produto",
+      slug: "novo-produto",
+      description: "Novissimo produto.",
+      price: 200,
+      categoryIds: [category3.id],
+    };
+    const updatedProduct = await productService.updateProduct(data);
+
+    expect(updatedProduct).toBeInstanceOf(Product);
+    expect(updatedProduct?.id).toBe(data.id);
+    expect(updatedProduct?.name).toBe(data.name);
+    expect(updatedProduct?.slug).toBe(data.slug);
+    expect(updatedProduct?.description).toBe(data.description);
+    expect(updatedProduct?.price).toBe(data.price);
+    expect(updatedProduct?.categories.map((product) => product.id)).toEqual(
+      data.categoryIds,
+    );
+  });
 });

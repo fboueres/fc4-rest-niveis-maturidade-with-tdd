@@ -45,6 +45,34 @@ export class ProductService {
       relations: ["categories"],
     });
   }
+
+  async updateProduct(data: {
+    id: number;
+    name?: string;
+    slug?: string;
+    description?: string;
+    price?: number;
+    categoryIds?: number[];
+  }): Promise<Product | null> {
+    const { id, name, slug, description, price, categoryIds } = data;
+
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ["categories"],
+    });
+    if (!product) return null;
+
+    if (name) product.name = name;
+    if (slug) product.slug = slug;
+    if (description) product.description = description;
+    if (price) product.price = price;
+    if (categoryIds) {
+      const categories = await this.categoryRepository.findByIds(categoryIds);
+      product.categories = categories;
+    }
+
+    return await this.productRepository.save(product);
+  }
 }
 
 export async function createProductService(): Promise<ProductService> {
