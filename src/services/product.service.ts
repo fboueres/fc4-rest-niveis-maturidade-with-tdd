@@ -31,6 +31,13 @@ export class ProductService {
 
     return await this.productRepository.save(product);
   }
+
+  async getProductById(id: number): Promise<Product | null> {
+    return await this.productRepository.findOne({
+      where: { id },
+      relations: ["categories"],
+    });
+  }
 }
 
 export async function createProductService(): Promise<ProductService> {
