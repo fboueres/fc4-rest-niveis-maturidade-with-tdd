@@ -72,4 +72,32 @@ describe("ProductService", () => {
     expect(savedProduct?.price).toBe(product.price);
     expect(savedProduct?.categories).toEqual(product.categories);
   });
+
+  it("should get a Product by it's slug", async () => {
+    const category1 = await categoryService.createCategory(
+      "Minha Categoria",
+      "minha-categoria",
+    );
+    const category2 = await categoryService.createCategory(
+      "My Categoria",
+      "my-category",
+    );
+    const product = await productService.createProduct(
+      "Meu Produto",
+      "my-product-slug",
+      "Este é o Meu Produto.",
+      100,
+      [category1.id, category2.id],
+    );
+
+    const savedProduct = await productService.getProductBySlug(product.slug);
+
+    expect(savedProduct).toBeInstanceOf(Product);
+    expect(savedProduct?.id).toBe(product.id);
+    expect(savedProduct?.name).toBe(product.name);
+    expect(savedProduct?.slug).toBe(product.slug);
+    expect(savedProduct?.description).toBe(product.description);
+    expect(savedProduct?.price).toBe(product.price);
+    expect(savedProduct?.categories).toEqual(product.categories);
+  });
 });

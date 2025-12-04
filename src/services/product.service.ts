@@ -38,6 +38,13 @@ export class ProductService {
       relations: ["categories"],
     });
   }
+
+  async getProductBySlug(slug: string): Promise<Product | null> {
+    return await this.productRepository.findOne({
+      where: { slug },
+      relations: ["categories"],
+    });
+  }
 }
 
 export async function createProductService(): Promise<ProductService> {
