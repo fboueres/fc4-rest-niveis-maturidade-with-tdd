@@ -73,6 +73,10 @@ export class ProductService {
 
     return await this.productRepository.save(product);
   }
+
+  async deleteProduct(id: number): Promise<void> {
+    await this.productRepository.delete({ id });
+  }
 }
 
 export async function createProductService(): Promise<ProductService> {

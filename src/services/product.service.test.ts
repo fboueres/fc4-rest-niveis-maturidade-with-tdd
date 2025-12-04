@@ -142,4 +142,26 @@ describe("ProductService", () => {
       data.categoryIds,
     );
   });
+
+  it("should delete a Product", async () => {
+    const category1 = await categoryService.createCategory(
+      "Minha Categoria",
+      "minha-categoria",
+    );
+    const category2 = await categoryService.createCategory(
+      "My Categoria",
+      "my-category",
+    );
+    const product = await productService.createProduct(
+      "Meu Produto",
+      "my-product-slug",
+      "Este é o Meu Produto.",
+      100,
+      [category1.id, category2.id],
+    );
+
+    await productService.deleteProduct(product.id);
+
+    expect(await productService.getProductById(product.id)).toBeNull();
+  });
 });
