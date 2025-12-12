@@ -1,4 +1,5 @@
 import { createDatabaseConnection } from "../database";
+import type { CreateProductDTO } from "../dtos/create_product.dto";
 import { Product } from "../entities/Product";
 import { CategoryService } from "./category.service";
 import { createProductService, ProductService } from "./product.service";
@@ -181,5 +182,52 @@ describe("ProductService", () => {
       ]),
     );
     expect(typeof res.total).toBe("number");
+  });
+
+  it("should create many Products", async () => {
+    await categoryService.createCategory("Minha Categoria", "minha-categoria");
+    await categoryService.createCategory("My Categoria", "my-category");
+    await categoryService.createCategory("My Categoria", "my-category");
+
+    const productsDTOs: CreateProductDTO[] = [
+      {
+        name: "Wireless Headphones",
+        slug: "wireless-headphones",
+        description:
+          "Premium over-ear wireless headphones with active noise cancellation and long battery life.",
+        price: 249.99,
+        categoryIds: [1],
+      },
+      {
+        name: "Running Shoes",
+        slug: "running-shoes",
+        description:
+          "Lightweight and cushioned running shoes designed for comfort and high performance.",
+        price: 129.99,
+        categoryIds: [2],
+      },
+      {
+        name: "Yoga Mat Premium",
+        slug: "yoga-mat-premium",
+        description:
+          "Extra-thick, non-slip yoga mat made from eco-friendly materials for ultimate comfort.",
+        price: 44.99,
+        categoryIds: [3],
+      },
+    ];
+
+    const res: Product[] = await productService.createManyProducts(productsDTOs);
+
+    expect(res.every((item) => item instanceof Product)).toBe(true);
+    expect(res).toEqual(
+      productsDTOs.map((dto) =>
+        expect.objectContaining({
+          name: dto.name,
+          slug: dto.slug,
+          description: dto.description,
+          price: dto.price,
+        }),
+      ),
+    );
   });
 });

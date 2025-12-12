@@ -1,4 +1,5 @@
 import { createDatabaseConnection } from "../database";
+import type { CreateProductDTO } from "../dtos/create_product.dto";
 import type { Category } from "../entities/Category";
 import { Product } from "../entities/Product";
 import { In, Like, type Repository } from "typeorm";
@@ -30,6 +31,38 @@ export class ProductService {
     product.categories = categories;
 
     return await this.productRepository.save(product);
+  }
+
+  async createManyProducts(
+    productsDTOs: CreateProductDTO[],
+  ): Promise<Product[]> {
+    const categoryIds = [
+      ...new Set(productsDTOs.flatMap((dto) => dto.categoryIds)),
+    ];
+    const categories = await this.categoryRepository.find({
+      where: {
+        id: In(categoryIds),
+      },
+    });
+
+    const categoryMap = new Map<number, Category>();
+    categories.forEach((cat) => categoryMap.set(cat.id, cat));
+
+    const products: Product[] = productsDTOs.map((productDTO) => {
+      const product = new Product();
+      product.name = productDTO.name;
+      product.slug = productDTO.slug;
+      product.description = productDTO.description;
+      product.price = productDTO.price;
+
+      product.categories = productDTO.categoryIds.map(
+        (id) => categoryMap.get(id)!,
+      );
+
+      return product;
+    });
+
+    return await this.productRepository.save(products);
   }
 
   async getProductById(id: number): Promise<Product | null> {
