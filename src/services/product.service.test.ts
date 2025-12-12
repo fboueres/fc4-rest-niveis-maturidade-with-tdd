@@ -164,4 +164,22 @@ describe("ProductService", () => {
 
     expect(await productService.getProductById(product.id)).toBeNull();
   });
+
+  it("should list Products", async () => {
+    const res = await productService.listProducts();
+
+    expect(res.products.every((item) => item instanceof Product)).toBe(true);
+    expect(res.products).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.anything(),
+          name: expect.anything(),
+          slug: expect.anything(),
+          description: expect.anything(),
+          price: expect.anything(),
+        }),
+      ]),
+    );
+    expect(typeof res.total).toBe("number");
+  });
 });

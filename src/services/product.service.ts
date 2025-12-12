@@ -1,7 +1,7 @@
 import { createDatabaseConnection } from "../database";
 import type { Category } from "../entities/Category";
 import { Product } from "../entities/Product";
-import { In, type Repository } from "typeorm";
+import { In, Like, type Repository } from "typeorm";
 
 export class ProductService {
   constructor(
@@ -76,6 +76,30 @@ export class ProductService {
 
   async deleteProduct(id: number): Promise<void> {
     await this.productRepository.delete({ id });
+  }
+
+  async listProducts(
+    data: {
+      page: number;
+      limit: number;
+      filter?: { name?: string; categories_slug?: string[] };
+    } = { page: 1, limit: 10 },
+  ): Promise<{ products: Product[]; total: number }> {
+    const { page, limit, filter } = data;
+    const where: any = {};
+
+    if (filter?.name) where.name = Like(`%${filter.name}%`);
+    if (filter?.categories_slug && filter?.categories_slug.length > 0)
+      where.categories = { slug: In(filter.categories_slug) };
+
+    const [products, total] = await this.productRepository.findAndCount({
+      where,
+      relations: ["categories"],
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return { products, total };
   }
 }
 
