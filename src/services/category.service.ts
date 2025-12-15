@@ -12,6 +12,10 @@ export class CategoryService {
 
     return await this.categoryRepository.save(category);
   }
+
+  async getCategoryById(id: number): Promise<Category | null> {
+    return await this.categoryRepository.findOne({ where: { id } });
+  }
 }
 
 export async function createCategoryService(): Promise<CategoryService> {
