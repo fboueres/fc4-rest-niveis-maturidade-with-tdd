@@ -216,7 +216,8 @@ describe("ProductService", () => {
       },
     ];
 
-    const res: Product[] = await productService.createManyProducts(productsDTOs);
+    const res: Product[] =
+      await productService.createManyProducts(productsDTOs);
 
     expect(res.every((item) => item instanceof Product)).toBe(true);
     expect(res).toEqual(
