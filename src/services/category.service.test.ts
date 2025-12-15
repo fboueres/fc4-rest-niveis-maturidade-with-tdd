@@ -32,4 +32,15 @@ describe("CategoryService", () => {
     expect(res?.name).toBe(category.name);
     expect(res?.slug).toBe(category.slug);
   });
+
+  it("should find a category by slug", async () => {
+    const category = await categoryService.createCategory(
+      "Minha Categoria",
+      "minha-categoria",
+    );
+
+    const res = await categoryService.getCategoryBySlug(category.slug);
+
+    expect(res?.slug).toBe(category.slug);
+  });
 });
