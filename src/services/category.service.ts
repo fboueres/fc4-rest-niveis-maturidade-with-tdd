@@ -20,6 +20,21 @@ export class CategoryService {
   async getCategoryBySlug(slug: string): Promise<Category | null> {
     return await this.categoryRepository.findOne({ where: { slug } });
   }
+
+  async updateCategory(data: {
+    id: number;
+    name?: string;
+    slug?: string;
+  }): Promise<Category | null> {
+    const { id, name, slug } = data;
+    const category = await this.categoryRepository.findOne({ where: { id } });
+    if (!category) return null;
+
+    if (name) category.name = name;
+    if (slug) category.slug = slug;
+
+    return await this.categoryRepository.save(category);
+  }
 }
 
 export async function createCategoryService(): Promise<CategoryService> {
