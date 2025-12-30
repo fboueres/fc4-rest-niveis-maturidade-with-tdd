@@ -1,6 +1,7 @@
 import type { Repository } from "typeorm";
 import { Category } from "../entities/Category";
 import { createDatabaseConnection } from "../database";
+import { CreateCategoryDTO } from "../dtos/create_category.dto";
 
 export class CategoryService {
   constructor(private categoryRepository: Repository<Category>) {}
@@ -34,6 +35,21 @@ export class CategoryService {
     if (slug) category.slug = slug;
 
     return await this.categoryRepository.save(category);
+  }
+
+  async createManyCategories(
+    categoriesDTOs: CreateCategoryDTO[],
+  ): Promise<Category[]> {
+    const categories: Category[] = [];
+
+    categoriesDTOs.forEach(dto => {
+      const category = new Category();
+      category.name = dto.name;
+      category.slug = dto.slug;
+      categories.push(category);
+    });
+
+    return await this.categoryRepository.save(categories);
   }
 }
 

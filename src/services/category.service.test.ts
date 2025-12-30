@@ -1,3 +1,5 @@
+import { CreateCategoryDTO } from "../dtos/create_category.dto";
+import { Category } from "../entities/Category";
 import {
   createCategoryService,
   type CategoryService,
@@ -62,5 +64,35 @@ describe("CategoryService", () => {
     expect(updatedCategory?.id).toBe(category.id);
     expect(updatedCategory?.name).toBe(updatedCategoryData.name);
     expect(updatedCategory?.slug).toBe(updatedCategoryData.slug);
+  });
+
+  it("should create many categories", async () => {
+    const categoriesDTOs: CreateCategoryDTO[] = [
+      {
+        name: "Categoria 1",
+        slug: "categoria-1",
+      },
+      {
+        name: "Categoria 2",
+        slug: "categoria-2",
+      },
+      {
+        name: "Categoria 3",
+        slug: "categoria-3",
+      },
+    ];
+
+    const res: Category[] =
+      await categoryService.createManyCategories(categoriesDTOs);
+
+    expect(res.every((category) => category instanceof Category)).toBe(true);
+    expect(res).toEqual(
+      categoriesDTOs.map((dto) =>
+        expect.objectContaining({
+          name: dto.name,
+          slug: dto.slug,
+        })
+      )
+    );
   });
 });
